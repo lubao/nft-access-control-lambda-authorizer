@@ -55,7 +55,7 @@ Please note, if you have not yet installed Node.js or NPM, do so before attempti
 
 ### Create an Ethereum wallet for deploying your NFT smart contract
 
-To sign and pay for a transaction on the Ethereum Rinkeby network, an Etherum wallet is required. An Ethereum wallet is comprised of a private-public key pair. You can create your own Ethereum wallet programmatically using popular [Ethereum libraries Web3](https://web3js.readthedocs.io/en/v1.5.2/web3-eth-accounts.html) and [Ethers](https://docs.ethers.io/v5/api/signer/#Wallet). 
+To sign and pay for a transaction on the Ethereum Goerli network, an Etherum wallet is required. An Ethereum wallet is comprised of a private-public key pair. You can create your own Ethereum wallet programmatically using popular [Ethereum libraries Web3](https://web3js.readthedocs.io/en/v1.5.2/web3-eth-accounts.html) and [Ethers](https://docs.ethers.io/v5/api/signer/#Wallet). 
 
 ``NOTE: This method for creating and managing an Ethereum wallet private key is not suitable for production spending keys. Do not use this wallet for mainnet Ether!``
 
@@ -63,9 +63,8 @@ Generate the private key using one of the aforementioned libraries and upload to
 
 ![Ethereum wallet](./images/eth800x400.png)
 
-Add some Ethereum test tokens for the Rinkeby network by entering the Ethereum address generated during wallet creation https://faucet.rinkeby.io/ and requesting test tokens. Special care must be taken with spending keys (private keys), and [AWS Systems Manager](https://aws.amazon.com/systems-manager/) might not be adequate for wallets holding actual funds in some cases.
+Add some Ethereum test tokens for the Goerli network by entering the Ethereum address generated during wallet creation https://goerlifaucet.com/ and requesting test tokens. Special care must be taken with spending keys (private keys), and [AWS Systems Manager](https://aws.amazon.com/systems-manager/) might not be adequate for wallets holding actual funds in some cases.
 
-```Note: If you are having trouble requesting testnet Ether from the Rinkeby faucet above, you may use the Chainlink Faucet (https://faucets.chain.link/rinkeby) to get small amounts of testnet Ether.```
 
 ## Step 1: Deploy the NFT smart contract (ERC721)
 
