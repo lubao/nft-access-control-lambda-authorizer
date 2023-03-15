@@ -16,7 +16,7 @@ const deployContract = async (tokenName,tokenTicker, s3URI) => {
     console.log(tokenName, tokenTicker, s3URI)
     try {
         const factory = new ethers.ContractFactory(abi, bytecode, myWallet);
-        const contract = await factory.deploy(tokenName, tokenTicker, s3URI);
+        const contract = await factory.deploy(tokenName, tokenTicker, s3URI,{ gasLimit: 5000000 , gasPrice: '20000000000'});
         const txid = contract.deployTransaction.hash;
 
         return { "Transaction id" : txid, "ContractAddress": contract.address}

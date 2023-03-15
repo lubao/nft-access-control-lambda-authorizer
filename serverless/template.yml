@@ -16,6 +16,12 @@ Parameters:
     Default: "bc.t3.large"
   pAvailabilityZone:
     Type: String
+  pEnv:
+    Type: String
+    Default: "AWS"
+  pGanacheUrl:
+    Type: String
+    Default: "http://localhost:8545"
 Resources:
   EthereumNode:
     Type: "AWS::ManagedBlockchain::Node"
@@ -79,7 +85,7 @@ Resources:
     Properties: 
       CloudWatchRoleArn: !GetAtt CloudWatchRole.Arn
 
-# IAM Role for API GW + CWL
+  # IAM Role for API GW + CWL
   CloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -120,6 +126,7 @@ Resources:
             Method: POST
       Layers:
         - !Ref onchainUtils
+        - !Ref commonLibs
 
   nftMintRole:
         Type: AWS::IAM::Role
@@ -158,6 +165,8 @@ Resources:
        Variables:
          nodeId: !GetAtt EthereumNode.NodeId
          networkId: !GetAtt EthereumNode.NetworkId
+         ENV: !Ref pEnv
+         ganacheEndpoint: !Ref pGanacheUrl
       Handler: index.handler
       Runtime: nodejs14.x
       CodeUri: lambdas/nftdetails/.
@@ -177,6 +186,7 @@ Resources:
               Method: GET
       Layers:
         - !Ref onchainUtils
+        - !Ref commonLibs
 
   nftdeploy:
     Type: AWS::Serverless::Function
@@ -187,6 +197,8 @@ Resources:
          networkId: !GetAtt EthereumNode.NetworkId
          bucketName: !Ref MetadataBucket
          pvtkey: "ethSystemKey"
+         ENV: !Ref pEnv
+         ganacheEndpoint: !Ref pGanacheUrl
       Handler: index.handler
       Runtime: nodejs14.x
       CodeUri: lambdas/nftdeploy/.
@@ -207,6 +219,7 @@ Resources:
             Method: POST
       Layers:
         - !Ref onchainUtils
+        - !Ref commonLibs
   nftauth:
     Type: AWS::Serverless::Function
     Properties:
@@ -216,6 +229,8 @@ Resources:
           networkId: !GetAtt EthereumNode.NetworkId
           bucketName: !Ref MetadataBucket
           pvtkey: "ethSystemKey"
+          ENV: !Ref pEnv
+          ganacheEndpoint: !Ref pGanacheUrl
       Handler: index.handler
       Runtime: nodejs14.x
       CodeUri: lambdas/nftauth/.
@@ -229,6 +244,7 @@ Resources:
         - AmazonSSMReadOnlyAccess
       Layers:
         - !Ref onchainUtils
+        - !Ref commonLibs
 
   nftMetadata: 
     Type: AWS::Serverless::Function
@@ -239,9 +255,11 @@ Resources:
           networkId: !GetAtt EthereumNode.NetworkId
           bucketName: !Ref MetadataBucket
           pvtkey: "ethSystemKey"
+          ENV: !Ref pEnv
+          ganacheEndpoint: !Ref pGanacheUrl
       Handler: index.handler
       Runtime: nodejs14.x
-      CodeUri: lambdas/nftMetadata/.
+      CodeUri: lambdas/nftmetadata/.
       Description: GetMetaData 
       Timeout: 10
       Role: !GetAtt nftMetadataRole.Arn
@@ -263,6 +281,7 @@ Resources:
               Authorizer: MyLambdaTokenAuth
       Layers:
         - !Ref onchainUtils
+        - !Ref commonLibs
 
 
   nftMetadataRole:
@@ -302,12 +321,22 @@ Resources:
     Properties:
       LayerName: onchain-utils
       Description: blockchain utils
-      ContentUri: lambdas/shared/.
+      ContentUri: lambdas/shared/onchain-utils-module/.
       CompatibleRuntimes:
         - nodejs14.x
     Metadata:
       BuildMethod : nodejs14.x
   
+  commonLibs:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: common-libs
+      Description: CommonLibraries
+      ContentUri: lambdas/shared/common-libs/.
+      CompatibleRuntimes:
+        - nodejs14.x
+    Metadata:
+      BuildMethod : nodejs14.x
 
   MetadataBucketPolicy:
     Type: AWS::S3::BucketPolicy
